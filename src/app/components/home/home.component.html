@@ -1,0 +1,11 @@
+<div class="home-container">
+    <h1>Welcome to Recipe Book</h1>
+    <p>Discover and share amazing recipes with our community!</p>
+    <div class="cta-buttons">
+      <button routerLink="/recipes">Browse Recipes</button>
+      <!-- show login button if not authenticated -->
+      <button *ngIf="!isAuthenticated" routerLink="/login">Login to Share Recipes</button>
+      <!-- show share recipe button if authenticated -->
+      <button *ngIf="isAuthenticated" routerLink="/recipes/create">Share Your Recipe</button>
+    </div>
+  </div>
