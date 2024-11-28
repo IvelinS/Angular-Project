@@ -1,0 +1,21 @@
+<footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About Recipe Book</h3>
+        <p>Your go-to place for sharing and discovering delicious recipes. Join our community of food enthusiasts and share your culinary creations!</p>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a routerLink="/recipes">Browse Recipes</a></li>
+          <li *ngIf="isAuthenticated"><a routerLink="/recipes/create">Share Recipe</a></li>
+          <li *ngIf="isAuthenticated"><a routerLink="/profile">My Profile</a></li>
+          <li *ngIf="!isAuthenticated"><a routerLink="/login">Login</a></li>
+          <li *ngIf="!isAuthenticated"><a routerLink="/register">Register</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {{currentYear}} Recipe Book. All rights reserved.</p>
+    </div>
+  </footer>
