@@ -1,0 +1,56 @@
+<div class="create-recipe-container">
+    <h2>Create New Recipe</h2>
+  
+    <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" id="title" formControlName="title">
+        <div class="error-message" *ngIf="recipeForm.get('title')?.invalid && recipeForm.get('title')?.touched">
+          <span *ngIf="recipeForm.get('title')?.errors?.['required']">Title is required</span>
+          <span *ngIf="recipeForm.get('title')?.errors?.['minlength']">Title must be at least 3 characters</span>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" formControlName="description" rows="3"></textarea>
+        <div class="error-message" *ngIf="recipeForm.get('description')?.invalid && recipeForm.get('description')?.touched">
+          <span *ngIf="recipeForm.get('description')?.errors?.['required']">Description is required</span>
+          <span *ngIf="recipeForm.get('description')?.errors?.['minlength']">Description must be at least 10 characters</span>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="imageUrl">Image URL (optional)</label>
+        <input type="url" id="imageUrl" formControlName="imageUrl">
+      </div>
+  
+      <div class="form-group">
+        <label>Ingredients</label>
+        <div formArrayName="ingredients">
+          <div *ngFor="let ingredient of ingredients.controls; let i=index" class="array-item">
+            <input [formControlName]="i" placeholder="Enter ingredient">
+            <button type="button" class="remove-btn" (click)="removeIngredient(i)" *ngIf="ingredients.length > 1">×</button>
+          </div>
+        </div>
+        <button type="button" class="add-btn" (click)="addIngredient()">Add Ingredient</button>
+      </div>
+  
+      <div class="form-group">
+        <label>Instructions</label>
+        <div formArrayName="instructions">
+          <div *ngFor="let instruction of instructions.controls; let i=index" class="array-item">
+            <textarea [formControlName]="i" placeholder="Enter instruction step"></textarea>
+            <button type="button" class="remove-btn" (click)="removeInstruction(i)" *ngIf="instructions.length > 1">×</button>
+          </div>
+        </div>
+        <button type="button" class="add-btn" (click)="addInstruction()">Add Instruction</button>
+      </div>
+  
+      <div class="error-message" *ngIf="error">{{ error }}</div>
+  
+      <button type="submit" [disabled]="recipeForm.invalid || isSubmitting" class="submit-btn">
+        {{ isSubmitting ? 'Creating...' : 'Create Recipe' }}
+      </button>
+    </form>
+  </div>

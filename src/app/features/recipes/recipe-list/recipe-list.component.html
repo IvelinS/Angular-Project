@@ -1,0 +1,27 @@
+<div class="recipe-list-container">
+    <div class="header">
+      <h2>All Recipes</h2>
+      <a routerLink="/recipes/create" class="create-btn">Create New Recipe</a>
+    </div>
+  
+    <div *ngIf="isLoading" class="loading">
+      Loading recipes...
+    </div>
+  
+    <div *ngIf="error" class="error">
+      {{ error }}
+    </div>
+  
+    <div class="recipes-grid" *ngIf="!isLoading && !error">
+      <div class="recipe-card" *ngFor="let recipe of recipes">
+        <img [src]="recipe.imageUrl || 'assets/default-recipe.jpg'" [alt]="recipe.title">
+        <div class="recipe-content">
+          <h3>{{ recipe.title }}</h3>
+          <p>{{ recipe.description }}</p>
+          <div class="recipe-actions">
+            <a [routerLink]="['/recipes', recipe._id]" class="view-btn">View Recipe</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

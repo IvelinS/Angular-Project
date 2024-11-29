@@ -13,6 +13,8 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  error: string | null = null;
+  isLoading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -21,20 +23,24 @@ export class LoginComponent {
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(5)]]
+      password: ['', [Validators.required]]
     });
   }
 
-  login(): void {
-    if (this.loginForm.invalid) { return; }
+  login() {
+    if (this.loginForm.valid) {
+      this.isLoading = true;
+      this.error = null;
 
-    this.authService.login(this.loginForm.value).subscribe({
-      next: () => {
-        this.router.navigate(['/home']);
-      },
-      error: (err) => {
-        console.error('Login error:', err);
-      }
-    });
+      this.authService.login(this.loginForm.value).subscribe({
+        next: () => {
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          this.error = err?.error?.message || 'Login failed. Please try again.';
+          this.isLoading = false;
+        }
+      });
+    }
   }
 }

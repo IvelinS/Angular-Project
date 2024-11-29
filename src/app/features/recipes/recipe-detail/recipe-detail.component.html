@@ -1,0 +1,53 @@
+<div class="recipe-detail-container" *ngIf="!isLoading && !error && recipe">
+  <div class="recipe-header">
+    <h1>{{ recipe.title }}</h1>
+    <div class="recipe-meta">
+      <span>By {{ recipe.creator.username }}</span>
+      <span>Created: {{ recipe.createdAt | date }}</span>
+    </div>
+  </div>
+
+  <div class="recipe-actions" *ngIf="isCreator">
+    <a [routerLink]="['/recipes', recipe._id, 'edit']" class="edit-btn">Edit Recipe</a>
+    <button (click)="onDelete()" class="delete-btn">Delete Recipe</button>
+  </div>
+
+  <div class="recipe-image" *ngIf="recipe.imageUrl">
+    <img [src]="recipe.imageUrl" [alt]="recipe.title">
+  </div>
+
+  <div class="recipe-content">
+    <div class="description">
+      <h2>Description</h2>
+      <p>{{ recipe.description }}</p>
+    </div>
+
+    <div class="ingredients">
+      <h2>Ingredients</h2>
+      <ul>
+        <li *ngFor="let ingredient of recipe.ingredients">{{ ingredient }}</li>
+      </ul>
+    </div>
+
+    <div class="instructions">
+      <h2>Instructions</h2>
+      <ol>
+        <li *ngFor="let instruction of recipe.instructions">{{ instruction }}</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="recipe-footer">
+    <button (click)="onLike()" class="like-btn">
+      {{ recipe.likes.length }} Likes
+    </button>
+  </div>
+</div>
+
+<div class="loading" *ngIf="isLoading">
+  Loading recipe...
+</div>
+
+<div class="error" *ngIf="error">
+  {{ error }}
+</div>

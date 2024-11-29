@@ -1,11 +1,19 @@
 <nav>
     <div class="nav-wrapper">
-      <a href="#" class="brand-logo">Recipe Book</a>
-      <ul class="nav-links">
-        <li><a routerLink="/home">Home</a></li>
-        <li><a routerLink="/recipes">Recipes</a></li>
-        <li><a routerLink="/login">Login</a></li>
-        <li><a routerLink="/register">Register</a></li>
-      </ul>
+      <a routerLink="/" class="brand">Recipe Book</a>
+      
+      <div class="nav-links">
+        <ng-container *ngIf="authService.user$ | async as user; else authLinks">
+          <a routerLink="/recipes">Recipes</a>
+          <a routerLink="/recipes/create">Create Recipe</a>
+          <a routerLink="/profile">Profile</a>
+          <button class="logout-btn" (click)="logout()">Logout</button>
+        </ng-container>
+        
+        <ng-template #authLinks>
+          <a routerLink="/login">Login</a>
+          <a routerLink="/register">Register</a>
+        </ng-template>
+      </div>
     </div>
   </nav>

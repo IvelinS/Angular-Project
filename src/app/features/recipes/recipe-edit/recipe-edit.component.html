@@ -1,0 +1,68 @@
+<div class="edit-recipe-container">
+  <h2>Edit Recipe</h2>
+
+  <div class="loading" *ngIf="isLoading">Loading recipe...</div>
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input 
+        type="text" 
+        id="title" 
+        formControlName="title"
+        [class.invalid]="recipeForm.get('title')?.invalid && recipeForm.get('title')?.touched">
+      <div class="error-message" *ngIf="recipeForm.get('title')?.invalid && recipeForm.get('title')?.touched">
+        <span *ngIf="recipeForm.get('title')?.errors?.['required']">Title is required</span>
+        <span *ngIf="recipeForm.get('title')?.errors?.['minlength']">Title must be at least 3 characters</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea 
+        id="description" 
+        formControlName="description"
+        [class.invalid]="recipeForm.get('description')?.invalid && recipeForm.get('description')?.touched">
+      </textarea>
+      <div class="error-message" *ngIf="recipeForm.get('description')?.invalid && recipeForm.get('description')?.touched">
+        <span *ngIf="recipeForm.get('description')?.errors?.['required']">Description is required</span>
+        <span *ngIf="recipeForm.get('description')?.errors?.['minlength']">Description must be at least 10 characters</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="imageUrl">Image URL (optional)</label>
+      <input type="url" id="imageUrl" formControlName="imageUrl">
+    </div>
+
+    <div class="form-group">
+      <label>Ingredients</label>
+      <div class="array-container" formArrayName="ingredients">
+        <div *ngFor="let ingredient of ingredients.controls; let i=index" class="array-item">
+          <input [formControlName]="i" placeholder="Enter ingredient">
+          <button type="button" class="remove-btn" (click)="removeIngredient(i)">Remove</button>
+        </div>
+      </div>
+      <button type="button" class="add-btn" (click)="addIngredient()">Add Ingredient</button>
+    </div>
+
+    <div class="form-group">
+      <label>Instructions</label>
+      <div class="array-container" formArrayName="instructions">
+        <div *ngFor="let instruction of instructions.controls; let i=index" class="array-item">
+          <input [formControlName]="i" placeholder="Enter instruction step">
+          <button type="button" class="remove-btn" (click)="removeInstruction(i)">Remove</button>
+        </div>
+      </div>
+      <button type="button" class="add-btn" (click)="addInstruction()">Add Instruction</button>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="recipeForm.invalid || isLoading">
+        {{ isLoading ? 'Saving...' : 'Save Changes' }}
+      </button>
+      <a [routerLink]="['/recipes', recipeId]" class="cancel-btn">Cancel</a>
+    </div>
+  </form>
+</div>
