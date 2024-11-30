@@ -6,6 +6,7 @@ import { RecipeListComponent } from './features/recipes/recipe-list/recipe-list.
 import { RecipeCreateComponent } from './features/recipes/recipe-create/recipe-create.component';
 import { RecipeDetailComponent } from './features/recipes/recipe-detail/recipe-detail.component';
 import { RecipeEditComponent } from './features/recipes/recipe-edit/recipe-edit.component';
+import { ProfileComponent } from './features/profile/profile.component';
 import { authGuard, publicGuard } from './core/guards/auth.guards';
 
 export const routes: Routes = [
@@ -32,5 +33,9 @@ export const routes: Routes = [
   },
   { path: 'recipes/:id', component: RecipeDetailComponent },
   { path: 'recipes', component: RecipeListComponent },
- 
+  { 
+    path: 'profile', 
+    component: ProfileComponent,
+    canActivate: [authGuard]
+  },
 ];

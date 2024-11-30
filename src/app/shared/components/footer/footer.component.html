@@ -7,11 +7,24 @@
       <div class="footer-section">
         <h3>Quick Links</h3>
         <ul>
+          <li><a routerLink="/">Home</a></li>
           <li><a routerLink="/recipes">Browse Recipes</a></li>
-          <li *ngIf="isAuthenticated"><a routerLink="/recipes/create">Share Recipe</a></li>
-          <li *ngIf="isAuthenticated"><a routerLink="/profile">My Profile</a></li>
-          <li *ngIf="!isAuthenticated"><a routerLink="/login">Login</a></li>
-          <li *ngIf="!isAuthenticated"><a routerLink="/register">Register</a></li>
+          
+          <li *ngIf="isAuthenticated">
+            <a routerLink="/recipes/create">Create Recipe</a>
+          </li>
+          
+          <li *ngIf="isAuthenticated">
+            <a routerLink="/profile">My Profile</a>
+          </li>
+          
+          <li *ngIf="!isAuthenticated">
+            <a routerLink="/login">Login</a>
+          </li>
+          
+          <li *ngIf="!isAuthenticated">
+            <a routerLink="/register">Register</a>
+          </li>
         </ul>
       </div>
     </div>

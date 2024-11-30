@@ -1,0 +1,58 @@
+<div class="profile-container">
+    <div class="profile-header">
+      <h1>My Profile</h1>
+      <div class="user-info">
+        <h2>{{ (user$ | async)?.username }}</h2>
+        <p>Email: {{ (user$ | async)?.email }}</p>
+      </div>
+    </div>
+  
+    <div class="profile-content">
+      <!-- My Recipes Section -->
+      <section class="my-recipes">
+        <h3>My Recipes</h3>
+        <div class="loading" *ngIf="isLoading">Loading...</div>
+        <div class="error" *ngIf="error">{{ error }}</div>
+        
+        <div class="recipes-grid" *ngIf="!isLoading && !error">
+          <div class="recipe-card" *ngFor="let recipe of userRecipes">
+            <img [src]="recipe.imageUrl" [alt]="recipe.title">
+            <div class="recipe-info">
+              <h4>{{ recipe.title }}</h4>
+              <p>{{ recipe.description | slice:0:100 }}...</p>
+              <div class="recipe-actions">
+                <a [routerLink]="['/recipes', recipe._id]" class="view-btn">View</a>
+                <a [routerLink]="['/recipes', recipe._id, 'edit']" class="edit-btn">Edit</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="no-recipes" *ngIf="userRecipes.length === 0">
+            <p>You haven't created any recipes yet.</p>
+            <a routerLink="/recipes/create" class="create-btn">Create Recipe</a>
+          </div>
+        </div>
+      </section>
+  
+      <!-- Liked Recipes Section -->
+      <section class="liked-recipes">
+        <h3>Liked Recipes</h3>
+        <div class="error" *ngIf="likedError">{{ likedError }}</div>
+        <div class="recipes-grid" *ngIf="!likedError">
+          <div class="recipe-card" *ngFor="let recipe of likedRecipes">
+            <img [src]="recipe.imageUrl" [alt]="recipe.title">
+            <div class="recipe-info">
+              <h4>{{ recipe.title }}</h4>
+              <p>{{ recipe.description | slice:0:100 }}...</p>
+              <a [routerLink]="['/recipes', recipe._id]" class="view-btn">View</a>
+            </div>
+          </div>
+          
+          <div class="no-recipes" *ngIf="likedRecipes.length === 0">
+            <p>You haven't liked any recipes yet.</p>
+            <a routerLink="/recipes" class="browse-btn">Browse Recipes</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>

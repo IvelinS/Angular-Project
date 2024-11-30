@@ -1,0 +1,96 @@
+.profile-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  
+  .profile-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .user-info {
+    margin-top: 1rem;
+  }
+  
+  .profile-content {
+    display: grid;
+    gap: 2rem;
+  }
+  
+  .recipes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  
+  .recipe-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+  
+  .recipe-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .recipe-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .recipe-info {
+    padding: 1rem;
+  }
+  
+  .recipe-info h4 {
+    margin: 0 0 0.5rem;
+    color: #333;
+  }
+  
+  .recipe-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  
+  .view-btn, .edit-btn, .create-btn, .browse-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    text-align: center;
+  }
+  
+  .view-btn {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .edit-btn {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .loading, .error {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .error {
+    color: #dc3545;
+  }
+  
+  .no-recipes {
+    text-align: center;
+    padding: 2rem;
+    grid-column: 1 / -1;
+  }
+  
+  @media (max-width: 768px) {
+    .recipes-grid {
+      grid-template-columns: 1fr;
+    }
+  }

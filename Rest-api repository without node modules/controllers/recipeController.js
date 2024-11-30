@@ -88,11 +88,31 @@ function likeRecipe(req, res, next) {
     .catch(next);
 }
 
+function getUserRecipes(req, res, next) {
+    const { _id: userId } = req.user;
+
+    recipeModel.find({ creator: userId })
+        .populate('creator', '-password')
+        .then(recipes => res.json(recipes))
+        .catch(next);
+}
+
+function getLikedRecipes(req, res, next) {
+    const { _id: userId } = req.user;
+
+    recipeModel.find({ likes: userId })
+        .populate('creator', '-password')
+        .then(recipes => res.json(recipes))
+        .catch(next);
+}
+
 module.exports = {
     getRecipes,
     getRecipe,
     createRecipe,
     editRecipe,
     deleteRecipe,
-    likeRecipe
+    likeRecipe,
+    getUserRecipes,
+    getLikedRecipes
 }

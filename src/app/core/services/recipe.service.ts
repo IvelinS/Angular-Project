@@ -8,6 +8,8 @@ import { Recipe } from '../interfaces/recipe/recipe.interface';
   providedIn: 'root'
 })
 export class RecipeService {
+  private apiUrl = `${environment.apiUrl}/recipes`;
+
   constructor(private http: HttpClient) { }
 
   getAllRecipes(): Observable<Recipe[]> {
@@ -32,5 +34,13 @@ export class RecipeService {
 
   likeRecipe(id: string): Observable<Recipe> {
     return this.http.post<Recipe>(`${environment.apiUrl}/recipes/${id}/like`, {}, { withCredentials: true });
+  }
+
+  getUserRecipes(): Observable<Recipe[]> {
+    return this.http.get<Recipe[]>(`${this.apiUrl}/user`);
+  }
+
+  getLikedRecipes(): Observable<Recipe[]> {
+    return this.http.get<Recipe[]>(`${this.apiUrl}/liked`);
   }
 }
