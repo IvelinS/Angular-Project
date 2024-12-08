@@ -18,16 +18,20 @@ const recipeSchema = new mongoose.Schema({
         type: String,
         required: true
     }],
-    imageUrl: String,
+    imageUrl: {
+        type: String,
+        default: ''
+    },
     creator: {
         type: ObjectId,
         ref: "User",
-        required: true
+        required: false
     },
     likes: [{
         type: ObjectId,
-        ref: "User"
-    }],
+        ref: "User",
+        default: []
+    }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Recipe', recipeSchema);

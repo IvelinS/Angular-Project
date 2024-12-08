@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { Recipe } from '../../../core/interfaces/recipe/recipe.interface';
 
@@ -8,62 +8,71 @@ import { Recipe } from '../../../core/interfaces/recipe/recipe.interface';
   selector: 'app-recipe-list',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './recipe-list.component.html',
+  template: `
+    <div class="recipes-container">
+      <h2>Browse Recipes</h2>
+      
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <div class="recipes-grid">
+        <div *ngFor="let recipe of recipes" class="recipe-card">
+          <img [src]="recipe.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image'" [alt]="recipe.title">
+          <div class="recipe-info">
+            <h3>{{ recipe.title }}</h3>
+            <p>{{ recipe.description }}</p>
+            <a [routerLink]="['/recipes', recipe._id]" class="view-recipe">View Recipe</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
   styleUrls: ['./recipe-list.component.css']
 })
 export class RecipeListComponent implements OnInit {
   recipes: Recipe[] = [];
-  isLoading = false;
   error: string | null = null;
-  currentUserId = 'current-user-id'; // TODO update this later
-  constructor(private recipeService: RecipeService) {}
+
+  constructor(private recipeService: RecipeService) { }
 
   ngOnInit(): void {
+    console.log('Component initialized');
     this.loadRecipes();
   }
 
-  loadRecipes(): void {
-    this.isLoading = true;
-    this.error = null;
-    
-    this.recipeService.getAllRecipes().subscribe({
-      next: (recipes) => {
+  private loadRecipes(): void {
+    console.log('Loading recipes...');
+    this.recipeService.getRecipes().subscribe({
+      next: (recipes: Recipe[]) => {
+        console.log('Recipes received:', recipes);
+        if (recipes.length === 0) {
+          console.log('No recipes found, seeding...');
+          this.seedRecipes();
+        } else {
+          this.recipes = recipes;
+          this.error = null;
+        }
+      },
+      error: (err: Error) => {
+        console.error('Loading recipes failed:', err);
+        this.error = 'Failed to load recipes';
+      }
+    });
+  }
+
+  private seedRecipes(): void {
+    console.log('Starting seed process...');
+    this.recipeService.seedRecipes().subscribe({
+      next: (recipes: Recipe[]) => {
+        console.log('Seeds added:', recipes);
         this.recipes = recipes;
-        this.isLoading = false;
+        this.error = null;
       },
-      error: (err) => {
-        console.error('Error loading recipes:', err);
-        this.error = 'Failed to load recipes. Please try again later.';
-        this.isLoading = false;
+      error: (err: Error) => {
+        console.error('Seeding failed:', err);
+        this.error = 'Failed to load recipes';
       }
     });
-  }
-
-  likeRecipe(id: string): void {
-    this.recipeService.likeRecipe(id).subscribe({
-      next: (updatedRecipe) => {
-        this.recipes = this.recipes.map(recipe => 
-          recipe._id === updatedRecipe._id ? updatedRecipe : recipe
-        );
-      },
-      error: (err) => {
-        console.error('Error liking recipe:', err);
-      }
-    });
-  }
-
-  deleteRecipe(id: string): void {
-    this.recipeService.deleteRecipe(id).subscribe({
-      next: () => {
-        this.recipes = this.recipes.filter(recipe => recipe._id !== id);
-      },
-      error: (err) => {
-        console.error('Error deleting recipe:', err);
-      }
-    });
-  }
-
-  isCreator(recipe: Recipe): boolean {
-    return recipe.creator._id === this.currentUserId;
   }
 }

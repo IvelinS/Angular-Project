@@ -1,64 +1,28 @@
-.recipe-detail-container {
+.recipe-detail {
   max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-.recipe-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.recipe-meta {
-  color: #666;
-  font-size: 0.9rem;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.recipe-actions {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.edit-btn, .delete-btn {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.edit-btn {
-  background-color: #28a745;
-  color: white;
-}
-
-.delete-btn {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-}
-
-.recipe-image {
-  margin-bottom: 2rem;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.recipe-image img {
+.recipe-detail img {
   width: 100%;
   max-height: 400px;
   object-fit: cover;
+  border-radius: 8px;
+  margin: 1rem 0;
 }
 
-.recipe-content {
-  margin-bottom: 2rem;
+.description {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 1rem 0;
 }
 
-.recipe-content h2 {
+.ingredients, .instructions {
+  margin: 2rem 0;
+}
+
+.ingredients h3, .instructions h3 {
   color: #333;
   margin-bottom: 1rem;
 }
@@ -71,39 +35,18 @@
   margin-bottom: 0.5rem;
 }
 
-.recipe-footer {
-  text-align: center;
+.actions {
   margin-top: 2rem;
 }
 
-.like-btn {
-  padding: 0.5rem 1.5rem;
-  background-color: #007bff;
-  color: white;
+button {
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
-.like-btn:hover {
-  background-color: #0056b3;
-}
-
-.loading, .error {
-  text-align: center;
-  padding: 2rem;
-}
-
-.error {
-  color: #dc3545;
-}
-
-@media (max-width: 768px) {
-  .recipe-detail-container {
-    margin: 1rem auto;
-  }
-  
-  .recipe-image img {
-    max-height: 300px;
-  }
+button:hover {
+  opacity: 0.9;
 }

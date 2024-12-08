@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Recipe } from '../interfaces/recipe/recipe.interface';
 import { environment } from '../../../environments/environment';
-import { Recipe } from '../interfaces/recipe/recipe.interface'; 
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +12,9 @@ export class RecipeService {
 
   constructor(private http: HttpClient) { }
 
-  getAllRecipes(): Observable<Recipe[]> {
-    return this.http.get<Recipe[]>(`${environment.apiUrl}/recipes`);
+  getRecipes(): Observable<Recipe[]> {
+    console.log('Calling API:', this.apiUrl);
+    return this.http.get<Recipe[]>(this.apiUrl);
   }
 
   getRecipe(id: string): Observable<Recipe> {
@@ -42,5 +43,10 @@ export class RecipeService {
 
   getLikedRecipes(): Observable<Recipe[]> {
     return this.http.get<Recipe[]>(`${this.apiUrl}/liked`);
+  }
+
+  seedRecipes(): Observable<Recipe[]> {
+    console.log('Calling seed API:', `${this.apiUrl}/seed`);
+    return this.http.post<Recipe[]>(`${this.apiUrl}/seed`, {});
   }
 }

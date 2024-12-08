@@ -1,10 +1,94 @@
 const { recipeModel, userModel } = require('../models');
 
+const seedRecipes = [
+    {
+        title: "Classic Spaghetti Carbonara",
+        description: "Traditional Italian pasta dish with eggs, cheese, pancetta and black pepper",
+        imageUrl: "https://images.services.kitchenstories.io/z_bWPIhhM6qs38B0E46CRaYs81Q=/3840x0/filters:quality(85)/images.kitchenstories.io/wagtailOriginalImages/R2568-photo-final-_0.jpg",
+        ingredients: [
+            "400g spaghetti",
+            "200g pancetta",
+            "4 large eggs",
+            "100g Pecorino Romano cheese"
+        ],
+        instructions: [
+            "Cook pasta in salted water",
+            "Fry pancetta until crispy",
+            "Mix eggs and cheese"
+        ]
+    },
+    {
+        title: "Homemade Margherita Pizza",
+        description: "Classic Neapolitan pizza with fresh basil, mozzarella, and tomatoes",
+        imageUrl: "https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=1474&auto=format&fit=crop",
+        ingredients: [
+            "Pizza dough",
+            "San Marzano tomatoes",
+            "Fresh mozzarella",
+            "Fresh basil"
+        ],
+        instructions: [
+            "Preheat oven to 500°F",
+            "Roll out dough",
+            "Add toppings",
+            "Bake until crispy"
+        ]
+    },
+    {
+        title: "Fresh Greek Salad",
+        description: "Traditional Greek salad with fresh vegetables and feta cheese",
+        imageUrl: "https://hips.hearstapps.com/hmg-prod/images/greek-salad-index-642f292397bbf.jpg?crop=0.888888888888889xw:1xh;center,top&resize=1200:*",
+        ingredients: [
+            "Cucumber",
+            "Tomatoes",
+            "Red onion",
+            "Feta cheese"
+        ],
+        instructions: [
+            "Chop vegetables",
+            "Combine in bowl",
+            "Add feta and olives",
+            "Dress with olive oil"
+        ]
+    }
+];
+
 function getRecipes(req, res, next) {
+    // First, get all existing recipes
     recipeModel.find()
         .populate('creator', '-password')
-        .then(recipes => res.json(recipes))
-        .catch(next);
+        .then(async (recipes) => {
+            try {
+                // If no recipes exist at all, add the seed recipes
+                if (recipes.length === 0) {
+                    console.log('No recipes found, adding seeds...');
+                    
+                    // Create seed recipes without a creator
+                    const seedsToCreate = seedRecipes.map(recipe => ({
+                        ...recipe,
+                        likes: []
+                    }));
+
+                    const seededRecipes = await recipeModel.insertMany(seedsToCreate);
+                    console.log('Seeds added successfully');
+                    
+                    // Return all recipes including the newly seeded ones
+                    return recipeModel.find().populate('creator', '-password');
+                }
+                
+                return recipes;
+            } catch (error) {
+                console.error('Error in recipe seeding:', error);
+                throw error;
+            }
+        })
+        .then(allRecipes => {
+            res.json(allRecipes);
+        })
+        .catch(error => {
+            console.error('Error in getRecipes:', error);
+            next(error);
+        });
 }
 
 function getRecipe(req, res, next) {
@@ -106,6 +190,42 @@ function getLikedRecipes(req, res, next) {
         .catch(next);
 }
 
+function forceSeedRecipes(req, res, next) {
+    // First check if recipes already exist
+    recipeModel.countDocuments()
+        .then(count => {
+            if (count > 0) {
+                // If recipes exist, just return the existing recipes
+                return recipeModel.find().populate('creator', '-password');
+            }
+
+            // If no recipes exist, proceed with seeding
+            return userModel.findOne()
+                .then(user => {
+                    if (!user) {
+                        throw new Error('No users found to assign as creator');
+                    }
+                    
+                    return Promise.all(seedRecipes.map(recipe => {
+                        const newRecipe = {
+                            ...recipe,
+                            likes: [],
+                            creator: user._id
+                        };
+                        return recipeModel.create(newRecipe);
+                    }));
+                });
+        })
+        .then(recipes => {
+            console.log('Recipes returned:', recipes);
+            res.json(recipes);
+        })
+        .catch(err => {
+            console.error('Seeding error:', err);
+            next(err);
+        });
+}
+
 module.exports = {
     getRecipes,
     getRecipe,
@@ -114,5 +234,6 @@ module.exports = {
     deleteRecipe,
     likeRecipe,
     getUserRecipes,
-    getLikedRecipes
+    getLikedRecipes,
+    forceSeedRecipes
 }

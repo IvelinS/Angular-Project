@@ -1,77 +1,68 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
-import { User, AuthResponse, LoginData, RegisterData } from '../interfaces/auth';
+import { BehaviorSubject, Observable, tap, ReplaySubject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private user$$ = new BehaviorSubject<User | undefined>(undefined);
-  public user$ = this.user$$.asObservable();
-  private authCheckComplete$$ = new BehaviorSubject<boolean>(false);
+  private user$$ = new BehaviorSubject<any>(undefined);
+  private user$ = this.user$$.asObservable();
+  
+  private authCheckComplete$$ = new ReplaySubject<boolean>(1);
   public authCheckComplete$ = this.authCheckComplete$$.asObservable();
 
   constructor(private http: HttpClient) {
-    this.checkAuthStatus();
-  }
-
-  private checkAuthStatus(): void {
-    this.authCheckComplete$$.next(false);
-    
-    this.getProfile().pipe(
-      catchError(error => {
-        console.error('Auth check failed:', error);
-        return of(undefined);
-      })
-    ).subscribe({
+    this.getProfile().subscribe({
       next: (user) => {
         this.user$$.next(user);
         this.authCheckComplete$$.next(true);
       },
       error: () => {
-        this.user$$.next(undefined);
+        this.user$$.next(null);
         this.authCheckComplete$$.next(true);
       }
     });
   }
 
   get isLoggedIn(): boolean {
-    return !!this.user$$.getValue();
+    return !!this.user$$.value;
   }
 
-  get userData$(): Observable<User | undefined> {
+  getUserId(): string | null {
+    return this.user$$.value?._id || null;
+  }
+
+  getProfile() {
+    return this.http.get<any>(`${environment.apiUrl}/users/profile`);
+  }
+
+  login(email: string, password: string) {
+    return this.http.post<any>(`${environment.apiUrl}/login`, { email, password })
+      .pipe(tap(user => {
+        this.user$$.next(user);
+        this.authCheckComplete$$.next(true);
+      }));
+  }
+
+  register(username: string, email: string, password: string, rePassword: string) {
+    return this.http.post<any>(`${environment.apiUrl}/register`, { username, email, password, rePassword })
+      .pipe(tap(user => {
+        this.user$$.next(user);
+        this.authCheckComplete$$.next(true);
+      }));
+  }
+
+  logout() {
+    return this.http.post<any>(`${environment.apiUrl}/logout`, {})
+      .pipe(tap(() => {
+        this.user$$.next(null);
+        this.authCheckComplete$$.next(true);
+      }));
+  }
+
+  getUser(): Observable<any> {
     return this.user$;
-  }
-
-  register(data: RegisterData): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${environment.apiUrl}/register`, data, { withCredentials: true })
-      .pipe(tap((response) => this.user$$.next(response)));
-  }
-
-  login(data: LoginData): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${environment.apiUrl}/login`, data, { withCredentials: true })
-      .pipe(tap((response) => this.user$$.next(response)));
-  }
-
-  logout(): Observable<void> {
-    return this.http
-      .post<void>(`${environment.apiUrl}/logout`, {}, { withCredentials: true })
-      .pipe(tap(() => this.user$$.next(undefined)));
-  }
-
-  getProfile(): Observable<User> {
-    return this.http
-      .get<User>(`${environment.apiUrl}/users/profile`, { withCredentials: true })
-      .pipe(tap((response) => this.user$$.next(response)));
-  }
-
-  updateProfile(data: Partial<User>): Observable<User> {
-    return this.http
-      .put<User>(`${environment.apiUrl}/users/profile`, data, { withCredentials: true })
-      .pipe(tap((response) => this.user$$.next(response)));
   }
 }

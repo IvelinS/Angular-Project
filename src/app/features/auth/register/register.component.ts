@@ -41,7 +41,9 @@ export class RegisterComponent {
       this.isLoading = true;
       this.errorMessage = '';
       
-      this.authService.register(this.registerForm.value).subscribe({
+      const { username, email, password, repeatPassword } = this.registerForm.value;
+      
+      this.authService.register(username, email, password, repeatPassword).subscribe({
         next: () => {
           this.router.navigate(['/login'], { 
             queryParams: { registered: 'true' } 

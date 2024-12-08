@@ -20,13 +20,13 @@ export class ProfileComponent implements OnInit {
   isLoading = false;
   error: string | null = null;
   likedError: string | null = null;
-  user$: Observable<User | undefined>;
+  user$: Observable<any>;
 
   constructor(
     public authService: AuthService,
     private recipeService: RecipeService
   ) {
-    this.user$ = this.authService.user$;
+    this.user$ = this.authService.getUser();
   }
 
   ngOnInit(): void {
