@@ -11,6 +11,9 @@ Key Features:
 - Protected routes
 - Form validation
 - Error handling
+- Default seed recipes
+- Responsive image handling
+- Conditional navigation
 
 ## Used Frameworks and Libraries
 
@@ -58,7 +61,7 @@ Key Features:
 
 ### Public Features
 - View homepage
-- Browse recipe catalog
+- Browse recipe catalog with seed recipes and responsive images
 - View recipe details
 - Register/Login
 
