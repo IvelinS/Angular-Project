@@ -156,38 +156,64 @@ function likeRecipe(req, res, next) {
     const { recipeId } = req.params;
     const { _id: userId } = req.user;
 
-    recipeModel.findByIdAndUpdate(
-        recipeId, 
-        { $addToSet: { likes: userId } }, 
-        { new: true }
-    )
-    .populate('creator', '-password')
-    .then(recipe => {
-        if (recipe) {
-            res.json(recipe);
-        } else {
-            res.status(404).json({ message: 'Recipe not found' });
-        }
-    })
-    .catch(next);
+    // First check if the user has already liked the recipe
+    recipeModel.findById(recipeId)
+        .then(recipe => {
+            if (!recipe) {
+                return res.status(404).json({ message: 'Recipe not found' });
+            }
+
+            const isLiked = recipe.likes.includes(userId);
+            const operation = isLiked 
+                ? { $pull: { likes: userId } }    // Remove like
+                : { $addToSet: { likes: userId } }; // Add like
+
+            return recipeModel.findByIdAndUpdate(
+                recipeId,
+                operation,
+                { new: true }
+            ).populate('creator', '-password');
+        })
+        .then(updatedRecipe => {
+            if (updatedRecipe) {
+                res.json(updatedRecipe);
+            } else {
+                res.status(404).json({ message: 'Recipe not found' });
+            }
+        })
+        .catch(next);
 }
 
 function getUserRecipes(req, res, next) {
     const { _id: userId } = req.user;
+    console.log('Fetching recipes for user:', userId);
 
     recipeModel.find({ creator: userId })
         .populate('creator', '-password')
-        .then(recipes => res.json(recipes))
-        .catch(next);
+        .then(recipes => {
+            console.log('Found recipes:', recipes.length);
+            res.json(recipes);
+        })
+        .catch(err => {
+            console.error('Error fetching user recipes:', err);
+            next(err);
+        });
 }
 
 function getLikedRecipes(req, res, next) {
     const { _id: userId } = req.user;
+    console.log('Fetching liked recipes for user:', userId);
 
     recipeModel.find({ likes: userId })
         .populate('creator', '-password')
-        .then(recipes => res.json(recipes))
-        .catch(next);
+        .then(recipes => {
+            console.log('Found liked recipes:', recipes.length);
+            res.json(recipes);
+        })
+        .catch(err => {
+            console.error('Error fetching liked recipes:', err);
+            next(err);
+        });
 }
 
 function forceSeedRecipes(req, res, next) {

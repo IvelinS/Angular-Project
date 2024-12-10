@@ -1,0 +1,44 @@
+<div class="comments-section">
+  <h3>Comments</h3>
+
+  <div class="comment-form" *ngIf="authService.isLoggedIn">
+    <form [formGroup]="commentForm" (ngSubmit)="onSubmit()">
+      <textarea 
+        formControlName="content" 
+        placeholder="Add a comment..."
+        rows="3">
+      </textarea>
+      <div class="error-message" *ngIf="commentForm.get('content')?.touched && commentForm.get('content')?.errors?.['required']">
+        Comment cannot be empty
+      </div>
+      <button type="submit" [disabled]="commentForm.invalid">Post Comment</button>
+    </form>
+  </div>
+
+  <div class="login-prompt" *ngIf="!authService.isLoggedIn">
+    <p>Please <a routerLink="/login">login</a> to leave a comment.</p>
+  </div>
+
+  <div class="comments-list">
+    <div *ngIf="isLoading" class="loading">Loading comments...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+    
+    <div *ngIf="!isLoading && !error && comments.length === 0" class="no-comments">
+      No comments yet. Be the first to comment!
+    </div>
+
+    <div *ngFor="let comment of comments" class="comment">
+      <div class="comment-header">
+        <span class="username">{{ comment.creator.username }}</span>
+        <span class="date">{{ comment.createdAt | date }}</span>
+      </div>
+      <p class="content">{{ comment.content }}</p>
+      <button 
+        *ngIf="canDeleteComment(comment)"
+        (click)="deleteComment(comment._id)" 
+        class="delete-btn">
+        Delete
+      </button>
+    </div>
+  </div>
+</div>

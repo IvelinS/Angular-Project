@@ -1,12 +1,12 @@
 # Recipe Website Documentation
 
 ## Overview
-A Single Page Application (SPA) built with Angular 17 that enables users to discover, share, and interact with recipes. The application features both public and private areas, where authenticated users can create, edit, and like recipes, while non-authenticated users can browse and view recipe details.
+A Single Page Application (SPA) built with Angular 17 that enables users to discover, share, and interact with recipes. The application features both public and private areas, where authenticated users can create, edit, like, and comment on recipes, while non-authenticated users can browse and view recipe details.
 
 Key Features:
 - User authentication (register/login)
 - Recipe management (CRUD operations)
-- Interactive features (likes)
+- Interactive features (likes, comments)
 - Responsive design
 - Protected routes
 - Form validation
@@ -49,7 +49,6 @@ Key Features:
 - **Node.js**: JavaScript runtime environment
 - **npm**: Package management
 
-
 ## How to Run
 
 ### Prerequisites
@@ -70,8 +69,9 @@ Key Features:
 - Edit own recipes
 - Delete own recipes
 - Like/unlike recipes
+- Comment on recipes
 - User Profile 
- - View personal information (username, email)
- - View own created recipes
- - View liked recipes collection
+  - View personal information (username, email)
+  - View own created recipes
+  - View liked recipes collection
 

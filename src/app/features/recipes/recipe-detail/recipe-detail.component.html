@@ -42,6 +42,11 @@
       {{ recipe.likes.length }} Likes
     </button>
   </div>
+
+  <app-comment-section 
+    *ngIf="recipe" 
+    [recipeId]="recipe._id">
+  </app-comment-section>
 </div>
 
 <div class="loading" *ngIf="isLoading">

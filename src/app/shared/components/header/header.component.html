@@ -3,7 +3,7 @@
       <a routerLink="/" class="brand">Recipe Book</a>
       
       <div class="nav-links">
-        <ng-container *ngIf="authService.user$ | async as user; else authLinks">
+        <ng-container *ngIf="authService.user | async as user; else authLinks">
           <a routerLink="/recipes">Recipes</a>
           <a routerLink="/recipes/create">Create Recipe</a>
           <a routerLink="/profile">Profile</a>

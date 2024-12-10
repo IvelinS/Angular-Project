@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Recipe } from '../../../core/interfaces/recipe/recipe.interface';
+import { CommentSectionComponent } from './comment-section/comment-section.component';
 
 @Component({
   selector: 'app-recipe-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, CommentSectionComponent],
   template: `
     <div *ngIf="recipe" class="recipe-detail">
       <h2>{{ recipe.title }}</h2>
@@ -48,6 +49,11 @@ import { Recipe } from '../../../core/interfaces/recipe/recipe.interface';
       <div class="likes" *ngIf="recipe.likes">
         Likes: {{ recipe.likes.length }}
       </div>
+
+      <app-comment-section 
+        *ngIf="recipe" 
+        [recipeId]="recipe._id">
+      </app-comment-section>
     </div>
 
     <div *ngIf="error" class="error-message">

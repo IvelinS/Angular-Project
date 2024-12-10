@@ -6,37 +6,46 @@ const {
 } = require('../models');
 
 function auth(redirectUnauthenticated = true) {
-
     return function (req, res, next) {
         const token = req.cookies[authCookieName] || '';
+        
+        if (!token) {
+            console.log('No token found');
+            return res.status(401).json({ message: "No authentication token found" });
+        }
+
         Promise.all([
             jwt.verifyToken(token),
             tokenBlacklistModel.findOne({ token })
         ])
-            .then(([data, blacklistedToken]) => {
+            .then(([decodedToken, blacklistedToken]) => {
                 if (blacklistedToken) {
                     return Promise.reject(new Error('blacklisted token'));
                 }
-                userModel.findById(data.id)
+                
+                console.log('Decoded token:', decodedToken);
+                
+                return userModel.findById(decodedToken.id)
                     .then(user => {
+                        if (!user) {
+                            console.log('User not found for id:', decodedToken.id);
+                            return Promise.reject(new Error(`User not found for id: ${decodedToken.id}`));
+                        }
                         req.user = user;
                         req.isLogged = true;
                         next();
-                    })
+                    });
             })
             .catch(err => {
-                if (!redirectUnauthenticated) {
-                    next();
-                    return;
-                }
-                if (['token expired', 'blacklisted token', 'jwt must be provided'].includes(err.message)) {
-                    console.error(err);
-                    res
-                        .status(401)
-                        .send({ message: "Invalid token!" });
-                    return;
-                }
-                next(err);
+                console.error('Auth error details:', {
+                    message: err.message,
+                    token: token.substring(0, 10) + '...',
+                    stack: err.stack
+                });
+                res.status(401).json({ 
+                    message: "Authentication failed", 
+                    error: err.message 
+                });
             });
     }
 }

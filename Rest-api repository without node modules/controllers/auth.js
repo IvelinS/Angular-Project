@@ -45,31 +45,55 @@ function register(req, res, next) {
 
 function login(req, res, next) {
     const { email, password } = req.body;
+    console.log('Login attempt for email:', email);
+
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Email and password are required' });
+    }
 
     userModel.findOne({ email })
         .then(user => {
-            return Promise.all([user, user ? user.matchPassword(password) : false]);
+            console.log('User found:', user ? 'yes' : 'no');
+            
+            if (!user) {
+                res.status(401).json({ message: 'Invalid email or password' });
+                return Promise.reject(false);
+            }
+
+            return Promise.all([user, user.matchPassword(password)]);
         })
         .then(([user, match]) => {
+            console.log('Password match:', match ? 'yes' : 'no');
+
             if (!match) {
-                res.status(401)
-                    .send({ message: 'Wrong email or password' });
-                return
+                res.status(401).json({ message: 'Invalid email or password' });
+                return Promise.reject(false);
             }
-            user = bsonToJson(user);
-            user = removePassword(user);
 
             const token = utils.jwt.createToken({ id: user._id });
+            console.log('Token created:', token.substring(0, 10) + '...');
 
-            if (process.env.NODE_ENV === 'production') {
-                res.cookie(authCookieName, token, { httpOnly: true, sameSite: 'none', secure: true })
-            } else {
-                res.cookie(authCookieName, token, { httpOnly: true })
-            }
-            res.status(200)
-                .send(user);
+            // Set cookie options
+            const cookieOptions = {
+                httpOnly: true,
+                secure: false, // Set to true in production
+                sameSite: 'lax',
+                maxAge: 24 * 60 * 60 * 1000 // 1 day
+            };
+
+            res.cookie(authCookieName, token, cookieOptions);
+            console.log('Cookie set with token');
+            
+            const userData = bsonToJson(user);
+            const userWithoutPassword = removePassword(userData);
+            
+            res.status(200).json(userWithoutPassword);
         })
-        .catch(next);
+        .catch(err => {
+            if (err === false) { return; }
+            console.error('Login error:', err);
+            next(err);
+        });
 }
 
 function logout(req, res) {
