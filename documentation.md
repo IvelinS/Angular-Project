@@ -14,6 +14,7 @@ Key Features:
 - Default seed recipes
 - Responsive image handling
 - Conditional navigation
+- Animated comment transition
 
 ## Used Frameworks and Libraries
 
