@@ -8,7 +8,7 @@
   </div>
 
   <div class="recipes-grid">
-    <div *ngFor="let recipe of recipes" class="recipe-card">
+    <div *ngFor="let recipe of recipes">
       <img [src]="recipe.imageUrl || 'assets/default-recipe.jpg'" [alt]="recipe.title">
       <div class="recipe-info">
         <h3>{{ recipe.title }}</h3>

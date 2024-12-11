@@ -27,7 +27,7 @@
       No comments yet. Be the first to comment!
     </div>
 
-    <div *ngFor="let comment of comments" class="comment">
+    <div *ngFor="let comment of comments" [@commentSlide] class="comment">
       <div class="comment-header">
         <span class="username">{{ comment.creator.username }}</span>
         <span class="date">{{ comment.createdAt | date }}</span>

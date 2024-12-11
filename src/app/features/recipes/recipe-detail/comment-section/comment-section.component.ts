@@ -6,13 +6,22 @@ import { Comment } from '../../../../core/interfaces/comment/comment';
 import { RecipeService } from '../../../../core/services/recipe.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Subject, takeUntil } from 'rxjs';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-comment-section',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './comment-section.component.html',
-  styleUrls: ['./comment-section.component.css']
+  styleUrls: ['./comment-section.component.css'],
+  animations: [
+    trigger('commentSlide', [
+      transition(':enter', [
+        style({ height: 0, opacity: 0 }),
+        animate('200ms ease-out', style({ height: '*', opacity: 1 }))
+      ])
+    ])
+  ]
 })
 export class CommentSectionComponent implements OnInit, OnDestroy {
   @Input() recipeId!: string;
